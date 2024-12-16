@@ -103,7 +103,6 @@
     }
   },
   "required": [
-    "id",
     "nodes",
     "edges"
   ]

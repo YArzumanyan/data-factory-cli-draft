@@ -1,18 +1,17 @@
 import os
 from utils.file_operations import read_pipeline, write_json
 
+#TODO: CREATED SCRIPT NEEDS A LOT OF CHANGES
+
 def generate_pipeline(user_file: str, output_script: str = "run_pipeline.py"):
     """
     Generate a Python script to run the pipeline in a Docker container.
     """
-    # Read and validate the pipeline
     pipeline = read_pipeline(user_file)
     
-    # Extract pipeline nodes and edges
     nodes = pipeline["nodes"]
     edges = pipeline["edges"]
 
-    # Create the Python script content
     script_lines = [
         "import os",
         "import subprocess",
@@ -42,27 +41,22 @@ def generate_pipeline(user_file: str, output_script: str = "run_pipeline.py"):
         ""
     ]
 
-    # Add copy and execution steps
     for node in nodes:
         if node["type"] == "script":
             if "path" in node:
-                # Local script
                 script_path = node["path"]
                 container_script_path = f"/app/{os.path.basename(script_path)}"
                 script_lines.append(f"        copy_to_container('{script_path}', '{container_script_path}')")
                 script_lines.append(f"        run_script_in_container('{container_script_path}', [])")
             else:
-                # Catalog-based script
                 script_lines.append(f"        print('TODO: Download script with ID {node['script_id']} into container')")
         
         elif node["type"] == "dataset":
             if "path" in node:
-                # Local dataset
                 dataset_path = node["path"]
                 container_dataset_path = f"/data/{os.path.basename(dataset_path)}"
                 script_lines.append(f"        copy_to_container('{dataset_path}', '{container_dataset_path}')")
             else:
-                # Catalog-based dataset
                 script_lines.append(f"        print('TODO: Download dataset with ID {node['dataset_id']} into container')")
 
     script_lines.append("")
@@ -72,7 +66,6 @@ def generate_pipeline(user_file: str, output_script: str = "run_pipeline.py"):
     script_lines.append("if __name__ == '__main__':")
     script_lines.append("    main()")
 
-    # Write the Python script to the output file
     with open(output_script, "w") as f:
         f.write("\n".join(script_lines))
     

@@ -1,5 +1,5 @@
 import typer
-from commands.pipeline import create_pipeline, update_pipeline
+from commands.pipeline import create_pipeline, update_pipeline, sync_pipeline, share_pipeline
 from commands.list import list_pipelines
 from commands.generate import generate_pipeline
 
@@ -14,6 +14,16 @@ def create(user_file: str):
 def update(user_file: str):
     """Update an existing pipeline."""
     update_pipeline(user_file)
+
+@app.command()
+def sync(user_file: str):
+    """Replace the user file with catalog version."""
+    sync_pipeline(user_file)
+
+@app.command()
+def share():
+    """Upload the pipeline to catalog."""
+    share_pipeline()
 
 @app.command()
 def list():
